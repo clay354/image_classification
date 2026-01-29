@@ -9,11 +9,13 @@ interface SearchFormProps {
   productId: string;
   limit: number;
   loading: boolean;
+  fetchingImages: boolean;
   onStartDateChange: (value: string) => void;
   onEndDateChange: (value: string) => void;
   onServiceKeyChange: (value: string) => void;
   onProductIdChange: (value: string) => void;
   onLimitChange: (value: number) => void;
+  onFetchImages: () => void;
   onSubmit: () => void;
 }
 
@@ -24,11 +26,13 @@ export default function SearchForm({
   productId,
   limit,
   loading,
+  fetchingImages,
   onStartDateChange,
   onEndDateChange,
   onServiceKeyChange,
   onProductIdChange,
   onLimitChange,
+  onFetchImages,
   onSubmit,
 }: SearchFormProps) {
   return (
@@ -98,12 +102,23 @@ export default function SearchForm({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div className="flex items-end">
+        <div className="flex items-end gap-2">
+          <button
+            onClick={onFetchImages}
+            disabled={loading || fetchingImages}
+            className={`px-4 py-2 rounded-md text-white font-medium whitespace-nowrap ${
+              loading || fetchingImages
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {fetchingImages ? "불러오는 중..." : "이미지 불러오기"}
+          </button>
           <button
             onClick={onSubmit}
-            disabled={loading}
-            className={`w-full px-4 py-2 rounded-md text-white font-medium ${
-              loading
+            disabled={loading || fetchingImages}
+            className={`px-4 py-2 rounded-md text-white font-medium whitespace-nowrap ${
+              loading || fetchingImages
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}

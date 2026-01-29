@@ -23,8 +23,40 @@ export default function Home() {
   // 결과 상태
   const [results, setResults] = useState<ReviewImage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchingImages, setFetchingImages] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>("all");
+
+  // 이미지만 불러오기 (분석 없이)
+  const handleFetchImages = async () => {
+    setFetchingImages(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/fetch-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          startDate,
+          endDate,
+          serviceKey: serviceKey || undefined,
+          productId: productId ? parseInt(productId) : undefined,
+          limit,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`이미지 불러오기 실패: ${response.status}`);
+      }
+
+      const data: AnalyzeResponse = await response.json();
+      setResults(data.results);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "알 수 없는 오류");
+    } finally {
+      setFetchingImages(false);
+    }
+  };
 
   // 분석 시작
   const handleAnalyze = async () => {
@@ -100,11 +132,13 @@ export default function Home() {
         productId={productId}
         limit={limit}
         loading={loading}
+        fetchingImages={fetchingImages}
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
         onServiceKeyChange={setServiceKey}
         onProductIdChange={setProductId}
         onLimitChange={setLimit}
+        onFetchImages={handleFetchImages}
         onSubmit={handleAnalyze}
       />
 
