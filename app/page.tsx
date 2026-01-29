@@ -45,11 +45,12 @@ export default function Home() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`이미지 불러오기 실패: ${response.status}`);
+        throw new Error(data.error || `이미지 불러오기 실패: ${response.status}`);
       }
 
-      const data: AnalyzeResponse = await response.json();
       setResults(data.results);
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류");
@@ -77,11 +78,12 @@ export default function Home() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`분석 실패: ${response.status}`);
+        throw new Error(data.error || `분석 실패: ${response.status}`);
       }
 
-      const data: AnalyzeResponse = await response.json();
       setResults(data.results);
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류");
